@@ -1,0 +1,11 @@
+const express = require('express');
+const router = express.Router();
+const adminCallController = require('../controllers/adminCallController');
+const { authMiddleware } = require('../middleware/authMiddleware');
+router.use(authMiddleware);
+router.get('/', adminCallController.getAdminCalls);
+router.get('/:id/history', adminCallController.getAdminCallHistory);
+router.post('/', adminCallController.createAdminCall);
+router.put('/:id', adminCallController.updateAdminCall);
+router.delete('/:id', adminCallController.deleteAdminCall);
+module.exports = router;

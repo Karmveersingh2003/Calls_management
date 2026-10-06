@@ -1,0 +1,13 @@
+const express = require('express');
+const router = express.Router();
+const importExportController = require('../controllers/importExportController');
+const { authMiddleware } = require('../middleware/authMiddleware');
+const upload = require('../middleware/uploadMiddleware');
+router.use(authMiddleware);
+router.get('/admin-template', importExportController.downloadAdminTemplate);
+router.get('/guest-template', importExportController.downloadGuestTemplate);
+router.post('/import-admin', upload.single('file'), importExportController.importAdminCalls);
+router.post('/import-guest', upload.single('file'), importExportController.importGuestCalls);
+router.get('/export-admin', importExportController.exportAdminCalls);
+router.get('/export-guest', importExportController.exportGuestCalls);
+module.exports = router;

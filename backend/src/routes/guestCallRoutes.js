@@ -1,0 +1,11 @@
+const express = require('express');
+const router = express.Router();
+const guestCallController = require('../controllers/guestCallController');
+const { authMiddleware } = require('../middleware/authMiddleware');
+router.use(authMiddleware);
+router.get('/', guestCallController.getGuestCalls);
+router.get('/:id/history', guestCallController.getGuestCallHistory);
+router.post('/', guestCallController.createGuestCall);
+router.put('/:id', guestCallController.updateGuestCall);
+router.delete('/:id', guestCallController.deleteGuestCall);
+module.exports = router;
