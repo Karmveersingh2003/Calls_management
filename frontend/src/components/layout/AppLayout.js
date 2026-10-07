@@ -295,7 +295,7 @@ const AppLayout = () => {
               <form onSubmit={saveBrand}>
                 <div className="form-group">
                   <label className="form-label">Hotel / Company Name</label>
-                  <input value={brandName} onChange={e => setBrandName(e.target.value)} placeholder="e.g. IBIS Bengaluru Hebbal" maxLength={120} />
+                  <input value={brandName} onChange={e => setBrandName(e.target.value)} placeholder="e.g. Company Name" maxLength={120} />
                   <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 6 }}>Shown as “Hotel Name : …” in exported Excel files.</div>
                 </div>
                 <div className="form-group">
