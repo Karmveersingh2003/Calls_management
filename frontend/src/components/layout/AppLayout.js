@@ -30,6 +30,12 @@ const AppLayout = () => {
   const [brandName, setBrandName] = useState('');
   const [brandLogo, setBrandLogo] = useState('');
   const [brandSaving, setBrandSaving] = useState(false);
+  const [cpOpen, setCpOpen] = useState(false);
+  const [cpCurrent, setCpCurrent] = useState('');
+  const [cpNew, setCpNew] = useState('');
+  const [cpConfirm, setCpConfirm] = useState('');
+  const [cpLoading, setCpLoading] = useState(false);
+  const [cpShow, setCpShow] = useState({ cur: false, nw: false, cf: false });
   const profileRef = useRef();
   const location = useLocation();
   const navigate = useNavigate();
@@ -66,6 +72,23 @@ const AppLayout = () => {
   }, []);
 
   const go = (to) => { navigate(to); setProfileOpen(false); };
+
+  const openCp = () => { setProfileOpen(false); setCpCurrent(''); setCpNew(''); setCpConfirm(''); setCpOpen(true); };
+
+  const handleCp = async (e) => {
+    e.preventDefault();
+    if (cpNew !== cpConfirm) { toast('New passwords do not match', 'error'); return; }
+    if (cpNew.length < 6) { toast('Password must be at least 6 characters', 'error'); return; }
+    setCpLoading(true);
+    try {
+      const api = (await import('../../services/api')).default;
+      await api.post('/auth/change-password', { currentPassword: cpCurrent, newPassword: cpNew });
+      toast('Password changed successfully', 'success');
+      setCpOpen(false);
+    } catch (err) {
+      toast(err.response?.data?.message || 'Failed to change password', 'error');
+    } finally { setCpLoading(false); }
+  };
 
   const openBranding = () => {
     setBrandName(user?.companyName || '');
@@ -203,7 +226,7 @@ const AppLayout = () => {
                   <button className="dropdown-item" onClick={() => { setProfileOpen(false); }}>
                     <span>👤</span> My Profile
                   </button>
-                  <button className="dropdown-item" onClick={() => { setProfileOpen(false); }}>
+                  <button className="dropdown-item" onClick={openCp}>
                     <span>🔒</span> Change Password
                   </button>
                   <button className="dropdown-item" onClick={openBranding}>
@@ -228,6 +251,37 @@ const AppLayout = () => {
           <Outlet />
         </main>
       </div>
+
+      {/* ── CHANGE PASSWORD MODAL ── */}
+      {cpOpen && (
+        <div className="modal-overlay" onClick={() => setCpOpen(false)}>
+          <div className="modal-content" style={{ maxWidth: 420 }} onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <span className="modal-title">🔒 Change Password</span>
+              <button className="modal-close" onClick={() => setCpOpen(false)}>✕</button>
+            </div>
+            <div className="modal-body">
+              <form onSubmit={handleCp}>
+                {[['cur', 'Current Password', cpCurrent, setCpCurrent], ['nw', 'New Password', cpNew, setCpNew], ['cf', 'Confirm New Password', cpConfirm, setCpConfirm]].map(([key, label, val, setter]) => (
+                  <div className="form-group" key={key}>
+                    <label className="form-label">{label}</label>
+                    <div style={{ position: 'relative' }}>
+                      <input type={cpShow[key] ? 'text' : 'password'} required value={val} onChange={e => setter(e.target.value)} placeholder={label} style={{ paddingRight: 40 }} />
+                      <button type="button" onClick={() => setCpShow(s => ({ ...s, [key]: !s[key] }))} style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', fontSize: 15, color: '#94a3b8' }}>
+                        {cpShow[key] ? '🙈' : '👁️'}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+                <div className="modal-footer">
+                  <button type="button" className="btn btn-secondary" onClick={() => setCpOpen(false)}>Cancel</button>
+                  <button type="submit" className="btn btn-primary" disabled={cpLoading}>{cpLoading ? 'Saving…' : 'Update Password'}</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── COMPANY BRANDING MODAL (name + logo used in Excel exports) ── */}
       {brandingOpen && (
