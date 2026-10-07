@@ -11,14 +11,29 @@ exports.getUsers = async (req, res, next) => {
 exports.createUser = async (req, res, next) => {
   try {
     const { name, username, email, password, role = 'user' } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
     const user = await User.create({
       name, username: username.toLowerCase().trim(), email: email.toLowerCase().trim(),
-      password: hashedPassword, role, isActive: true, createdBy: req.user._id
+      password, role, isActive: true, createdBy: req.user._id
     });
     const safeUser = user.toObject();
     delete safeUser.password;
     res.status(201).json({ success: true, data: safeUser });
+  } catch (err) { next(err); }
+};
+
+exports.publicSignup = async (req, res, next) => {
+  try {
+    const { name, username, email, password } = req.body;
+    if (!name || !username || !email || !password)
+      return res.status(400).json({ success: false, message: 'All fields are required' });
+    const exists = await User.findOne({ $or: [{ username: username.toLowerCase().trim() }, { email: email.toLowerCase().trim() }] });
+    if (exists) return res.status(409).json({ success: false, message: 'Username or email already exists' });
+    const user = await User.create({
+      name, username: username.toLowerCase().trim(), email: email.toLowerCase().trim(),
+      password, role: 'user', isActive: true
+    });
+    const safeUser = user.toObject(); delete safeUser.password;
+    res.status(201).json({ success: true, data: safeUser, message: 'Account created! Please sign in.' });
   } catch (err) { next(err); }
 };
 
