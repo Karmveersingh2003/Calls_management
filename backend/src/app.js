@@ -6,7 +6,7 @@ const { errorHandler, notFoundHandler } = require('./middleware/errorMiddleware'
 
 const app = express();
 app.use(helmet());
-app.use(cors({ origin: process.env.CLIENT_URL || 'https://callsmanagement.vercel.app', credentials: true }));
+app.use(cors({ origin:'https://callsmanagement.vercel.app', credentials: true }));
 app.use(express.json({ limit: '6mb' })); // room for base64 company logos
 app.use(morgan('dev'));
 
