@@ -10,6 +10,15 @@ app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:3000', creden
 app.use(express.json({ limit: '6mb' })); // room for base64 company logos
 app.use(morgan('dev'));
 
+// Root / health check
+app.get('/', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'Call Management API is running',
+  });
+});
+
+
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/masters', require('./routes/masterRoutes'));
