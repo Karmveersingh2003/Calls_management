@@ -168,7 +168,7 @@ const AppLayout = () => {
             <span className="sidebar-credit-label">Made by</span>
             <strong>Karamveer Singh</strong>
             <div className="sidebar-credit-links">
-              <a href="https://example.com" target="_blank" rel="noreferrer">Website</a>
+              <a href="https://example.com" target="_blank" rel="noreferrer">Mobile </a>
               <a href="tel:+917014018057">+91 7014018057</a>
             </div>
           </div>
