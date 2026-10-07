@@ -169,7 +169,7 @@ const AppLayout = () => {
             <strong>Karamveer Singh</strong>
             <div className="sidebar-credit-links">
               <a href="https://example.com" target="_blank" rel="noreferrer">Website</a>
-              <a href="tel:+910000000000">+91 00000 00000</a>
+              <a href="tel:+917014018057">+91 7014018057</a>
             </div>
           </div>
         </div>
